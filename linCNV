@@ -1,0 +1,79 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+
+# pipeline-specific wrapper script called on the command line
+# configures the environment and launches the master shell script
+
+# usage: <pipelineName> <command> <options>
+#        <pipelineName> <command> --help
+#        <pipelineName> --help
+
+# pipeline-specific parameters
+our $pipelineName    = "linCNV";
+our $pipelineMessage = "examine 10x scCNV Cell Ranger DNA output for CNVs";
+our @commands = ( # use multiple commands if logical, steps require different resources, etc.
+    {             # or let one command subsume serial steps that exploit parallel processing (e.g. sort --parallel)
+        name    => "bin",
+        script  => "linCNV_bin.sh",
+        ram     => "2G", # required, user may request more
+        message => "create bin x cell matrix for visual examination and cell selection",
+        require => [qw(common bin)] # corresponding to sub-folders
+    },
+    { 
+        name    => "analyze",
+        script  => "linCNV_analyze.sh",
+        ram     => "2G", # required, user may request more
+        message => "examine filtered bin x cell matrix and find CNVs",
+        require => [qw(common bin normalize scan segment)] # requires bin since will re-bin after removing cells
+    },
+);
+our @dependencies = ( # non-standard third-party programs called by the pipeline executable
+    {
+        name => "samtools",
+        version => "",  
+    },
+    {
+        name => "bedtools",
+        version => "",  
+    },
+    {
+        name => "pigz",
+        version => "",  
+    },
+    {
+        name => "Rscript",
+        version => "",  
+    },
+);
+
+# run launcher
+use File::Basename;
+our $pipelineDir = dirname(__FILE__);
+require "$pipelineDir/_workflow/launcher.pl";
+
+# sub called by launcher to set pipeline-specific derivative environment variables
+use vars qw($command);
+sub setDerivativeVariables {
+    
+    $ENV{MAX_SORT_RAM} = getStrRam($ENV{TOTAL_RAM_INT} - 2e9);    
+
+    $ENV{EXCLUSIONS_FILE} = "$ENV{DATA_PREFIX}.exclusions.bed";
+    $ENV{BAM_FILE} = "$ENV{CELL_RANGER_DIR}/possorted_bam.bam";
+    
+    $ENV{DATA_GENOME_PREFIX} = "$ENV{DATA_PREFIX}.$ENV{GENOME}";
+    $ENV{BIN_PREFIX} = "$ENV{DATA_GENOME_PREFIX}.bin";
+    $ENV{REBIN_PREFIX} = "$ENV{DATA_GENOME_PREFIX}.rebin";
+    $ENV{ANALYZE_PREFIX} = "$ENV{DATA_GENOME_PREFIX}.analyze";
+    
+    $ENV{PLOT_DIR} = "$ENV{OUTPUT_DIR}/plots";
+    mkdir $ENV{PLOT_DIR};
+    $ENV{PLOT_PREFIX} = "$ENV{PLOT_DIR}/$ENV{DATA_NAME}.$ENV{GENOME}";
+    if($command eq 'bin'){
+        checkIsDirectory('cell-ranger-dir');
+        checkIsFile('gap-file');
+        checkIsFile('blacklist-file');    
+        checkIsFile(undef, $ENV{BAM_FILE});        
+    }
+}
+
