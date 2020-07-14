@@ -1,0 +1,26 @@
+
+#----------------------------------------------------------------------
+# local.R launches the web tool on a desktop or laptop via localhost
+#----------------------------------------------------------------------
+# you just need to edit the proper file paths for your computer, below
+#----------------------------------------------------------------------
+
+# get the script path
+slavePath <- dirname(sys.frame(1)$ofile)
+
+# set required environment variables
+Sys.setenv(
+    # you should not need to change these values
+    MODE            = "local",
+    PIPELINE_NAME   = "scCNV",
+    LOCAL_PORT      = "10000",
+    SLAVE_PATH      = slavePath,
+    
+    # EDIT HERE: specific data paths for local mode
+    DATA_PATH       = "Z:\\data\\scCNV",  # required
+    GENOMES_DIR     = "Z:\\data\\genomes" # can be "", but you won't see gene annotations    
+)
+
+# call app.R
+source(paste(slavePath, 'app.R', sep="/"))
+

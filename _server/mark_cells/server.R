@@ -7,7 +7,7 @@
 `%notin%` <- Negate(`%in%`)
 server <- function(input, output, session){
     sessionEnv <- environment()
-    verbose <<- TRUE
+    verbose <<- FALSE
 
     # declare session-specific data resources; only visible within server block
     # see: https://shiny.rstudio.com/articles/scoping.html

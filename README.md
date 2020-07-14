@@ -62,13 +62,13 @@ First, the pipeline expects that you have already run the
 read alignment, duplicate purging, and cell assignments.
 Point the pipeline to that Cell Ranger output using option
 'cell-ranger-dir', where the code expects to find files
-names 'possorted_bam.bam' and 'per_cell_summary_metrics.csv'.
+named 'possorted_bam.bam' and 'per_cell_summary_metrics.csv'.
 
 Additional required  files define information about the
 genome in use. Option 'genome' might typically be 'hg38'.
 Option 'genome-dir' tells the pipeline where to find the
-genome reference files including '<genome>.fa' and its index
-'<genome.fa.fai>'.
+genome reference files including '\<genome\>.fa' and
+its index '\<genome\>.fa.fai'.
 
 The pipeline ignores low quality regions of the genome, which
 you must provide using option 'blacklist-file', a BED format

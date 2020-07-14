@@ -7,7 +7,7 @@
 `%notin%` <- Negate(`%in%`)
 server <- function(input, output, session){
     sessionEnv <- environment()
-    verbose <<- TRUE
+    verbose <<- FALSE
 
     # load all samples and supporting data again when requested (e.g. when new data are available)
     observeEvent(input$refreshServer, { initalizeApp() })
@@ -59,6 +59,7 @@ server <- function(input, output, session){
         output[[id]] <- renderImage({
             reportProgress('renderImage')
             #if(input$sample == "-" | genomeInfo$name == '-') return(list())
+            reportProgress(getQCPlot(input, genomeInfo$name, qc_plots[i]))
             list(
                 src = getQCPlot(input, genomeInfo$name, qc_plots[i]),
                 height = '100%'

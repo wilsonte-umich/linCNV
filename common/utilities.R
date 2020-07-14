@@ -104,14 +104,14 @@ ma <- function(x, n = 5){ # moving average
 fillZLayerValues <- function(zL, CNInt){ # requires only that raw and exp0 have been set
   CNInt   <- matrix(rep(CNInt, cell$N_accepted), ncol=cell$N_accepted)
   rpa     <- zL$exp0 / CNInt # i.e. reads per allele  
-  zL$cn   <- zL$raw / rpa  
-  zL$cnc  <- zL$cn - CNInt  
+  zL$cn   <- zL$raw / rpa
+  zL$cnc  <- zL$cn - CNInt
   zL$expG <- zL$exp0 + rpa
   zL$expL <- zL$exp0 - rpa
   zL$expL <- pmax(zL$expL, minExp) # prevent divide by zero
   zL$z0   <- (zL$raw - zL$exp0) / sqrt(zL$exp0) # Poisson variance = mean
   zL$zG   <- (zL$raw - zL$expG) / sqrt(zL$expG)
-  zL$zL   <- (zL$raw - zL$expL) / sqrt(zL$expL) 
+  zL$zL   <- (zL$raw - zL$expL) / sqrt(zL$expL)
   zL
 }
 collapseZLayers <- function(zL, CNInt, n){
