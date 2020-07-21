@@ -2,10 +2,10 @@
 
 echo "setting bin endpoints and counting reads per bin per cell"
 
-# create a single exclusion file from the gap and blacklist files
+# create a single exclusion file from the gap and bad-region files
 cat \
 <(cut -f 1-3 $GAP_FILE       | awk 'BEGIN{OFS="\t"}{print $0, "gap"}') \
-<(cut -f 1-3 $BLACKLIST_FILE | awk 'BEGIN{OFS="\t"}{print $0, "blacklist"}') |
+<(cut -f 1-3 $BAD_REGIONS_FILE | awk 'BEGIN{OFS="\t"}{print $0, "bad_region"}') |
 sort -k1,1 -k2,2n |
 bedtools merge -i stdin -c 4 -o distinct > $EXCLUSIONS_FILE
 checkPipe

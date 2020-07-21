@@ -21,7 +21,7 @@ push @{$options{bin}}, (
         message     => "BED file with genomic gap regions (i.e. N base spans)",
     },
     {           
-        long        => 'blacklist-file',
+        long        => 'bad-regions-file',
         short       => 'B',
         type        => 'str',            
         required    => 1,

@@ -221,7 +221,7 @@ sub bin_chromosome {
         
                 # handle rare regions with extremely high read density
                 # "bad" genome regions that have not been excluded by user
-                # not common if using the ENCODE genome blacklists
+                # not common if using the ENCODE genome bad region files
                 while($nextBinCount[$ALL] >= $binWeightAllCells){
                     my $badStart = min($binEnd + 1, $brkEnd);
                     my $badFrac = $binWeightAllCells / $nextBinCount[$ALL];

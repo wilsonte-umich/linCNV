@@ -71,10 +71,10 @@ genome reference files including '\<genome\>.fa' and
 its index '\<genome\>.fa.fai'.
 
 The pipeline ignores low quality regions of the genome, which
-you must provide using option 'blacklist-file', a BED format
-file with those offending regions. See
+you must provide using option 'bad-regions-file', a BED format
+file that lists those offending regions. See
 https://pubmed.ncbi.nlm.nih.gov/31249361/ for details and
-where to obtain a blacklist file for human and mouse.
+where to obtain a suitable file for human and mouse.
 
 Finally, 'gc-file' and 'mappability-file' must be set to
 two BED files that define genome bins that were assigned

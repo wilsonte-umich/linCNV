@@ -58,19 +58,6 @@ collapseByChrom <- function(layer, nMergedBins){ # when collapsing genome, don't
         matrix(vs, ncol=cell$N_accepted)
     }, mc.cores = env$N_CPU))   
 }
-#fillZLayerValues <- function(zL, CNInt){ # requires only that raw and exp0 have been set
-#  CNInt   <- matrix(rep(CNInt, cell$N_accepted), ncol=cell$N_accepted)
-#  rpa     <- zL$exp0 / CNInt # i.e. reads per allele  
-#  zL$cn   <- zL$raw / rpa  
-#  zL$cnc  <- zL$cn - CNInt  
-#  zL$expG <- zL$exp0 + rpa
-#  zL$expL <- zL$exp0 - rpa
-#  zL$expL <- pmax(zL$expL, minExp) # prevent divide by zero
-#  zL$z0   <- (zL$raw - zL$exp0) / sqrt(zL$exp0) # Poisson variance = mean
-#  zL$zG   <- (zL$raw - zL$expG) / sqrt(zL$expG)
-#  zL$zL   <- (zL$raw - zL$expL) / sqrt(zL$expL) 
-#  zL
-#}
 assembleArray <- function(bins, chrom=NULL){
 
   # output only has good bins and good cells, must account for this in future handling
@@ -184,7 +171,7 @@ rm(pcaZs, pcaZs_na_omit, pcaZs_omitted_bins)
 # back-calculate new exp0 values from corrected z0 values
 # NB: we adjust the _expected_ counts for a bin+cell, not the raw/observed values
 message("calculating revised read count expectations for cells x bins")
-zLayers_corrected$exp0 <- unlist(mclapply(1:cell$N_accepted, function(cellI){
+zLayers_corrected$exp0 <- matrix(unlist(mclapply(1:cell$N_accepted, function(cellI){
   z_corrected <- z_residual[,cellI]
   optimizeExp <- function(exp){ # exp could be at any HMM CNC
       z <- (rawIJ - exp) / sqrt(exp)
@@ -201,7 +188,7 @@ zLayers_corrected$exp0 <- unlist(mclapply(1:cell$N_accepted, function(cellI){
         optimize(optimizeExp, c(1/2, 2) * expX)$minimum * exp0 / expX        
       }
   })
-}, mc.cores = env$N_CPU))
+}, mc.cores = env$N_CPU)), ncol=cell$N_accepted)
 rm(hmm_cn, z_residual)
 
 # remember the correction ratios to apply later to each chromosome

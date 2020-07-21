@@ -25,7 +25,7 @@ clearBrushSelection <- function(){
 getCNInt <- function(){
     reportProgress('getCNInt')
     # whole genome uses condensed/merged bins
-    if(input$chrom == 'all') { 
+    if(input$chrom == 'all') {
         mergedBins$CNInt
     # a single selected chromosome (not yet filtered for position range)    
     } else { 

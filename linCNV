@@ -72,7 +72,7 @@ sub setDerivativeVariables {
     if($command eq 'bin'){
         checkIsDirectory('cell-ranger-dir');
         checkIsFile('gap-file');
-        checkIsFile('blacklist-file');    
+        checkIsFile('bad-regions-file');    
         checkIsFile(undef, $ENV{BAM_FILE});        
     }
 }
