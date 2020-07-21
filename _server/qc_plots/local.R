@@ -6,7 +6,7 @@
 #----------------------------------------------------------------------
 
 # get the script path
-slavePath <- dirname(sys.frame(1)$ofile)
+actionsPath <- dirname(sys.frame(1)$ofile)
 
 # set required environment variables
 Sys.setenv(
@@ -14,7 +14,7 @@ Sys.setenv(
     MODE            = "local",
     PIPELINE_NAME   = "linCNV",
     LOCAL_PORT      = "10000",
-    SLAVE_PATH      = slavePath,
+    ACTIONS_PATH    = actionsPath,
     
     # edit the following specific paths for local mode
     DATA_PATH       = "Z:\\data\\scCNV",  # required
@@ -22,5 +22,5 @@ Sys.setenv(
 )
 
 # call app.R
-source(paste(slavePath, 'app.R', sep="/"))
+source(paste(actionsPath, 'app.R', sep="/"))
 

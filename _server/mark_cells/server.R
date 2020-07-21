@@ -13,7 +13,7 @@ server <- function(input, output, session){
     # see: https://shiny.rstudio.com/articles/scoping.html
     for(script in c(
         "data_sources.R"
-    )) source(paste(serverEnv$SLAVE_PATH, script, sep="/"), local=TRUE)
+    )) source(paste(serverEnv$ACTIONS_PATH, script, sep="/"), local=TRUE)
     
     # load all samples and supporting data again when requested (e.g. when new data are available)
     observeEvent(input$refreshServer, { initalizeApp() })

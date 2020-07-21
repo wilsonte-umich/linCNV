@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# application-specific master shell script called by workflow launcher
+# application-specific data_script called by workflow launcher
 # organizes a set of serial pipeline steps, with staged execution
 
 # !!! IMPORTANT !!!

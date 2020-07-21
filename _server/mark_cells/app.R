@@ -26,7 +26,7 @@ host <- switch(serverEnv$MODE, # get and check the host
     prod  = "0.0.0.0",
     local = "127.0.0.1"
 )
-for (var in c('PIPELINE_NAME','SLAVE_PATH','DATA_PATH')){ # check required paths
+for (var in c('PIPELINE_NAME','ACTIONS_PATH','DATA_PATH')){ # check required paths
     if(is.null(serverEnv[[var]])) stop(paste("missing variable:", var))
 }
 
@@ -38,7 +38,7 @@ initalizeApp <- function(){
             "../constants.R",   # ../<scipts> pattern are scripts shared by multiple server apps
             "../data_sources.R",
             "../utilities.R"
-        )) source(paste(serverEnv$SLAVE_PATH, script, sep="/"))
+        )) source(paste(serverEnv$ACTIONS_PATH, script, sep="/"))
     }
     setProjects()
     setSamples()
@@ -46,7 +46,7 @@ initalizeApp <- function(){
         for(script in c(
             "ui.R",
             "server.R"            
-        )) source(paste(serverEnv$SLAVE_PATH, script, sep="/"))
+        )) source(paste(serverEnv$ACTIONS_PATH, script, sep="/"))
     }
     isInitialized <<- TRUE
 }

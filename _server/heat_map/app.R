@@ -28,7 +28,7 @@ host <- switch(serverEnv$MODE, # get and check the host
     local = "127.0.0.1"
 )
 if(is.null(host)) stop(paste("host missing for mode:", serverEnv$MODE))
-for (var in c('PIPELINE_NAME','SLAVE_PATH','DATA_PATH')){ # check required paths
+for (var in c('PIPELINE_NAME','A_PATH','DATA_PATH')){ # check required paths
     if(is.null(serverEnv[[var]])) stop(paste("missing variable:", var))
 }
 
@@ -44,7 +44,7 @@ initalizeApp <- function(){
             "genome.R",  
             "viewport.R",
             "temp.R"
-        )) source(paste(serverEnv$SLAVE_PATH, script, sep="/"))
+        )) source(paste(serverEnv$ACTIONS_PATH, script, sep="/"))
     }
     setProjects()
     setSamples()
@@ -52,7 +52,7 @@ initalizeApp <- function(){
         for(script in c(
             "ui.R",
             "server.R"            
-        )) source(paste(serverEnv$SLAVE_PATH, script, sep="/"))
+        )) source(paste(serverEnv$ACTIONS_PATH, script, sep="/"))
     }
     isInitialized <<- TRUE
 }

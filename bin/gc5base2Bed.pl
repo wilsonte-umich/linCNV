@@ -5,7 +5,7 @@ use warnings;
 # it is a helper script to assist with construction of the required 1 kbp bin GC bed file
 
 # example
-# zcat hg38.gc5Base.wigVarStep.gz | perl /treehouse/wilsonte_lab/ssd/pipelines/wilson/slaves/executables/linCNV/bin/gc5base2Bed.pl | gzip -c > hg38.gc5Base.bin_1000.bed.gz
+# zcat hg38.gc5Base.wigVarStep.gz | perl /treehouse/wilsonte_lab/ssd/pipelines/wilson/action_scripts/executables/linCNV/bin/gc5base2Bed.pl | gzip -c > hg38.gc5Base.bin_1000.bed.gz
 
 my ($span, $chrom, $start, $end);
 my ($binSum, $binN) = (0, 0);

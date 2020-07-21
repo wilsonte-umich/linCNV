@@ -2,7 +2,7 @@ use strict;
 use warnings;
 
 # generic code invoked by a pipeline-specific wrapper script
-# configures the environment and launches the master shell script
+# configures the environment and launches the data_script
 
 # working variables
 use vars qw($pipelineDir $pipelineName $pipelineMessage @commands

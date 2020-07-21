@@ -17,7 +17,7 @@ server <- function(input, output, session){
             "make_plots.R",
             "interactive.R",
             "../imager.R"
-        )) source(paste(serverEnv$SLAVE_PATH, script, sep="/"), local=sessionEnv)
+        )) source(paste(serverEnv$ACTIONS_PATH, script, sep="/"), local=sessionEnv)
     }
     loadSessionScripts()
     

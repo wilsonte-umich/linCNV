@@ -3,10 +3,10 @@
 # run_app.sh is called to launch the server in either 
 # interactive (developer) or daemon (production) mode
 # ---------------------------------------------------------------------
-# this slave script should be sourced by a parent script
+# this script should be sourced by a parent script
 # that collected these variables from user:
 #   MODE            either interactive|dev|daemon|prod
-#   SLAVE_PATH      where this script can be found
+#   ACTIONS_PATH    where this script can be found
 #   PIPELINE_NAME   the name of this pipeline
 #   DATA_PATH       where relevant data are found (projects, samples...)
 #   GENOMES_DIR     where genome annotation information can be found
@@ -23,8 +23,8 @@
 if [ "$MODE" = "" ]; then export MODE=dev; fi
 
 # check required variables
-if [ "$SLAVE_PATH" = "" ]; then
-    echo "missing variable: SLAVE_PATH"
+if [ "$ACTIONS_PATH" = "" ]; then
+    echo "missing variable: ACTIONS_PATH"
     exit 1
 fi
 if [ "$PIPELINE_NAME" = "" ]; then
@@ -43,13 +43,13 @@ fi
 # launch app with output written to interactive shell
 # used when developing app
 if [[ "$MODE" == "interactive" || "$MODE" == "dev" ]]; then
-    Rscript $SLAVE_PATH/app.R
+    Rscript $ACTIONS_PATH/app.R
 
 # launch app running as low priority background service
 # used in production
 elif [[ "$MODE" == "daemon" || "$MODE" == "prod" ]]; then
     rm -f nohup.out
-    nohup nice Rscript $SLAVE_PATH/app.R &
+    nohup nice Rscript $ACTIONS_PATH/app.R &
     echo $! > daemon.pid # for use by kill_daemon.sh
 
 # report errors 
