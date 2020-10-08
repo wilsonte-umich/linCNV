@@ -11,9 +11,16 @@ use warnings;
 
 # pipeline-specific parameters
 our $pipelineName    = "linCNV";
-our $pipelineMessage = "examine 10x scCNV Cell Ranger DNA output for CNVs";
+our $pipelineMessage = "examine scDNA-seq data (typically 10x Cell Ranger) for CNVs";
 our @commands = ( # use multiple commands if logical, steps require different resources, etc.
     {             # or let one command subsume serial steps that exploit parallel processing (e.g. sort --parallel)
+        name    => "align",
+        script  => "linCNV_align.sh",
+        ram     => "12G", # required, user may request more
+        message => "align a series of WGA samples before binning; not relevant for 10x scCNV",
+        require => [qw(common align)] # corresponding to sub-folders
+    },         
+    {           
         name    => "bin",
         script  => "linCNV_bin.sh",
         ram     => "2G", # required, user may request more
@@ -29,6 +36,10 @@ our @commands = ( # use multiple commands if logical, steps require different re
     },
 );
 our @dependencies = ( # non-standard third-party programs called by the pipeline executable
+    {
+        name => "bwa",
+        version => "",  
+    },              
     {
         name => "samtools",
         version => "",  
@@ -56,10 +67,15 @@ require "$pipelineDir/_workflow/launcher.pl";
 use vars qw($command);
 sub setDerivativeVariables {
     
-    $ENV{MAX_SORT_RAM} = getStrRam($ENV{TOTAL_RAM_INT} - 2e9);    
+    $ENV{MAX_SORT_RAM} = getStrRam($ENV{TOTAL_RAM_INT} - 2e9);
+    
+    if ($command eq 'align') { # to mimic CellRanger output when we align ourselves
+        $ENV{CELL_RANGER_DIR} = "$ENV{OUTPUT_DIR}/outs";
+    }
 
     $ENV{EXCLUSIONS_FILE} = "$ENV{DATA_PREFIX}.exclusions.bed";
     $ENV{BAM_FILE} = "$ENV{CELL_RANGER_DIR}/possorted_bam.bam";
+    $ENV{CELL_LIST_FILE} = "$ENV{CELL_RANGER_DIR}/per_cell_summary_metrics.csv";
     
     $ENV{DATA_GENOME_PREFIX} = "$ENV{DATA_PREFIX}.$ENV{GENOME}";
     $ENV{BIN_PREFIX} = "$ENV{DATA_GENOME_PREFIX}.bin";
@@ -69,6 +85,10 @@ sub setDerivativeVariables {
     $ENV{PLOT_DIR} = "$ENV{OUTPUT_DIR}/plots";
     mkdir $ENV{PLOT_DIR};
     $ENV{PLOT_PREFIX} = "$ENV{PLOT_DIR}/$ENV{DATA_NAME}.$ENV{GENOME}";
+    
+    if($command eq 'align'){
+        checkIsDirectory('input-dir');       
+    }
     if($command eq 'bin'){
         checkIsDirectory('cell-ranger-dir');
         checkIsFile('gap-file');

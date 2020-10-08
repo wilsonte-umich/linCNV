@@ -48,6 +48,7 @@ sub loadCells10X {
     open my $inH, "<", $cellsFile or die "$error: could not open $cellsFile for reading: $!\n";
     my $header = <$inH>;
     while(my $line = <$inH>){
+        chomp $line; # keep this for use with non-10x data
         my ($CB, $cellId) = split(",", $line);
         $cells{$CB} = $cellId;
         push @allCells, $cellId;
