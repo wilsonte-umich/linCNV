@@ -31,7 +31,7 @@ use constant {
     TLEN => 8,
     SEQ => 9,
     QUAL => 10,
-    #-------------
+#    #-------------
     TAGS => 11, # non-standard fields, also held in @aln
     CELL_ID => 0, # 0..nCells
     END_POS => 1,
