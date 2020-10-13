@@ -12,7 +12,7 @@ use warnings;
 # pipeline-specific parameters
 our $pipelineName    = "linCNV";
 our $pipelineMessage = "examine scDNA-seq data (typically 10x Cell Ranger) for CNVs";
-our @commands = ( # use multiple commands if logical, steps require different resources, etc.
+our @commands = ( # use multiple commands if logical, steps require different resources, etc.          
     {             # or let one command subsume serial steps that exploit parallel processing (e.g. sort --parallel)
         name    => "align",
         script  => "linCNV_align.sh",
@@ -33,6 +33,13 @@ our @commands = ( # use multiple commands if logical, steps require different re
         ram     => "2G", # required, user may request more
         message => "examine filtered bin x cell matrix and find CNVs",
         require => [qw(common bin normalize scan segment)] # requires bin since will re-bin after removing cells
+    },
+    { 
+        name    => "crosstab",
+        script  => "linCNV_crosstab.sh",
+        ram     => "2G", # required, user may request more
+        message => "examine a bin x cell fixed-width matrix as an alternative to bin+analyze",
+        require => [qw(common crosstab)] 
     },
 );
 our @dependencies = ( # non-standard third-party programs called by the pipeline executable

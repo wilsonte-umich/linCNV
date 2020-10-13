@@ -103,7 +103,7 @@ sub parse_BWA {
 #---------------------------------------------------------------------
 sub processPremerged {
     
-    # only consider proper molecules (same criterion as subsequent binning)
+    # only consider high-quality proper molecules (same criterion as subsequent binning)
     @{$alns[READ1]} == 1 or return;    
     my $aln = $alns[READ1][0];        
     ($$aln[FLAG] & _UNMAPPED) and return;    
@@ -126,7 +126,7 @@ sub processPremerged {
 #---------------------------------------------------------------------
 sub processUnmerged {
     
-    # only consider proper molecules (same criterion as subsequent binning)
+    # only consider high-quality proper molecules (same criterion as subsequent binning)
     @{$alns[READ1]} == 1 or return;
     @{$alns[READ2]} == 1 or return;
     my $aln1 = $alns[READ1][0];       
@@ -139,7 +139,7 @@ sub processUnmerged {
     $$aln2[MAPQ] >= $minMapQ or return;
 
     # calculate position information along genome and molecule
-    $$aln1[FLAG] & _REVERSE and ($aln1, $aln2) = ($aln2, $aln1);
+    ($$aln1[FLAG] & _REVERSE) and ($aln1, $aln2) = ($aln2, $aln1);
     my $endPos = getEnd($$aln2[POS], $$aln2[CIGAR]);    
     my $leftClip  = $$aln1[CIGAR] =~ m/$leftClip_/  ? $1 : 0;
     my $rightClip = $$aln2[CIGAR] =~ m/$rightClip_/ ? $1 : 0;   
