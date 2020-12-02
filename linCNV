@@ -18,7 +18,7 @@ our @commands = ( # use multiple commands if logical, steps require different re
         script  => "linCNV_align.sh",
         ram     => "12G", # required, user may request more
         message => "align a series of WGA samples before binning; not relevant for 10x scCNV",
-        require => [qw(common align)] # corresponding to sub-folders
+        require => [qw(align)] # corresponding to sub-folders
     },         
     {           
         name    => "bin",
