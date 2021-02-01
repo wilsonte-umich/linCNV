@@ -12,3 +12,7 @@ runWorkflowStep 1 crosstab/make_crosstab.sh
 # apply normalization and make summary plots and reports
 runWorkflowStep 2 crosstab/plot_crosstab.sh
 
+#!!!!!!!!!!!!!!!!!!!!!!!!!
+exit 666
+#!!!!!!!!!!!!!!!!!!!!!!!!!
+
