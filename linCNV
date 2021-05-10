@@ -35,6 +35,13 @@ our @commands = ( # use multiple commands if logical, steps require different re
         require => [qw(common bin normalize scan segment)] # requires bin since will re-bin after removing cells
     },
     { 
+        name    => "genotype",
+        script  => "linCNV_genotype.sh",
+        ram     => "4G", # required, user may request more
+        message => "call heterozygous SNPs from good and wavy cells",
+        require => [qw(genotype)] 
+    },
+    { 
         name    => "crosstab",
         script  => "linCNV_crosstab.sh",
         ram     => "2G", # required, user may request more
@@ -82,12 +89,13 @@ sub setDerivativeVariables {
 
     $ENV{EXCLUSIONS_FILE} = "$ENV{DATA_PREFIX}.exclusions.bed";
     $ENV{BAM_FILE} = "$ENV{CELL_RANGER_DIR}/possorted_bam.bam";
+    !-e $ENV{BAM_FILE} and $ENV{BAM_FILE} = "$ENV{CELL_RANGER_DIR}/output.bam";    
     $ENV{CELL_LIST_FILE} = "$ENV{CELL_RANGER_DIR}/per_cell_summary_metrics.csv";
-    
     $ENV{DATA_GENOME_PREFIX} = "$ENV{DATA_PREFIX}.$ENV{GENOME}";
     $ENV{BIN_PREFIX} = "$ENV{DATA_GENOME_PREFIX}.bin";
     $ENV{REBIN_PREFIX} = "$ENV{DATA_GENOME_PREFIX}.rebin";
     $ENV{ANALYZE_PREFIX} = "$ENV{DATA_GENOME_PREFIX}.analyze";
+    $ENV{GENOTYPE_PREFIX} = "$ENV{DATA_GENOME_PREFIX}.genotype";
     
     $ENV{PLOT_DIR} = "$ENV{OUTPUT_DIR}/plots";
     mkdir $ENV{PLOT_DIR};

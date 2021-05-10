@@ -20,4 +20,5 @@ cellTypeCodes <- 1:nCellTypes
 names(cellTypeCodes) <- cellTypes
 acceptedCellTypes   <- cellTypeCodes['__Good__']:cellTypeCodes['Anomalous']
 unacceptedCellTypes <- cellTypeCodes['Hyperseg']:cellTypeCodes['Unmarked']
+normalCellTypes     <- cellTypeCodes['__Good__']:cellTypeCodes['__Wavy__']
 

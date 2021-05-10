@@ -229,20 +229,28 @@ getDendogramClick <- function(level){
         inGroup=inGroup,
         d=d,
         gd=gd,
+        hmm=getViewportData(viewport_$region$bins, viewport_$cells, 'hmm')[,inGroup,drop=FALSE],
         x=x
     )
 }
-makeDendogramPlot <- function(x, y, yLab=""){
-    plot(x, y, typ="n", xlab="Bin", ylab=paste("Mean CNC", yLab), ylim=c(-2.5,2.5))
+makeDendogramPlot <- function(x, y, hmm=NULL, main="", yLab=""){
+    x <- x + min(viewport_$region$bins) - 1
+    plot(x, y, typ="n", main=main,
+         xlab="Bin", ylab=paste("Mean CNC", yLab), ylim=c(-2.5,2.5))
     abline(h=-2:2, col="grey40")
     abline(h=0, lwd=2)
-    points(x, y, pch=16, cex=0.5, col="blue")    
+    if(!is.null(hmm)) lines(x, hmm, col="orange", lwd=3)    
+    points(x, y, pch=16, cex=0.5, col="blue")
 }
 output$aggregatePlot <- renderPlot({
     dendogram <- getDendogramClick("CNC") # plotted as average CNC
     if(is.null(dendogram)) return(NULL)
     reportProgress('aggregatePlot')
-    makeDendogramPlot(dendogram$x, rowMeans(dendogram$gd))
+    makeDendogramPlot(dendogram$x, rowMeans(dendogram$gd),
+                      hmm = rowMeans(dendogram$hmm)
+                      #,
+                      #main = paste("cells", paste(range(which(dendogram$inGroup)), collapse=" to "))
+                      )
 })
 #----------------------------------------------------------------------
 # plot level 4 = aggregated CNC plot, independent of all prior baseline corrections
@@ -264,6 +272,6 @@ output$aggregatePlot_uncorrected <- renderPlot({
         CN <- dendogram$gd[,i] / readsPerAllele[groupCells[i]] / binAdj
         CN - viewport_$region$posBinData$CNInt
     })), ncol=nGroupCells))
-    makeDendogramPlot(dendogram$x, y, "uncorrected")
+    makeDendogramPlot(dendogram$x, y, yLab="uncorrected")
 })
 

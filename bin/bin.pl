@@ -57,7 +57,7 @@ my $reheader = '';
 if($testChrom !~ m/^chr/){
     my $bamHeader = qx/samtools view -H $ENV{BAM_FILE}/;
     $bamHeader =~ s/(\@SQ\tSN:)/$1chr/g; # OK, since will only use canonical chroms
-    my $reheaderFile = "$ENV{BAM_FILE}.reheader.sam";
+    my $reheaderFile = "$ENV{DATA_PREFIX}.bin.reheader.sam";
     open my $headerH, ">", $reheaderFile or die "$error: could not open $reheaderFile: $!\n";
     print $headerH $bamHeader;
     close $headerH;

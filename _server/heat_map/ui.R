@@ -52,17 +52,17 @@ ui <- fluidPage(
                                choiceNames = cellTypes[acceptedCellTypes],
                                choiceValues = acceptedCellTypes,
                                selected = acceptedCellTypes),
-            #radioButtons(inputId = "containsCNV",
-            #             inline = TRUE,
-            #             label = "Cell Has HMM CNV",
-            #             choices = c('all', 'yes', 'no'),
-            #             selected='all'),
+            radioButtons(inputId = "containsCNV",
+                         inline = TRUE,
+                         label = "Cell Has HMM CNV",
+                         choices = c('all', 'yes', 'no'),
+                         selected='all'),
             hr(),
             
             # plotting options
             radioButtons(inputId = "colorHeatMapBy",
                 label = "Color Heat Map By",
-                choices = c("CNC", "CN"), #, "HMM", "calls"
+                choices = c("CNC", "CN", "HMM"), #, "calls"
                 selected = "CNC",
                 inline = TRUE),
 

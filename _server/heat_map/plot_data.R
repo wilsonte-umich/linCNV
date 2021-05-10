@@ -68,15 +68,15 @@ applyCellFilters <- function(bins){
     allCells <- 1:cell$N_accepted 
 
     # filter for or against cells that have HMM CNVs in viewport
-    #cnvFilter <- if(input$containsCNV == 'all'){ 
-    #    TRUE       
-    #} else {        
-    #    hasCNV <- sapply(allCells, function(cellI){
-    #        sum(zLayers[[input$chrom]]$hmm[bins,cellI] != 0) != 0 # only considers CNVs in the viewport
-    #    })
-    #    if(input$containsCNV == 'yes') hasCNV else !hasCNV
-    #}
-    cnvFilter <- TRUE
+    cnvFilter <- if(input$containsCNV == 'all'){ 
+        TRUE       
+    } else {        
+        hasCNV <- sapply(allCells, function(cellI){
+            sum(zLayers[[input$chrom]]$hmm[bins,cellI] != 0) != 0 # only considers CNVs in the viewport
+        })
+        if(input$containsCNV == 'yes') hasCNV else !hasCNV
+    }
+    #cnvFilter <- TRUE
     
     # only show cells on a requested list of user mark types
     allowedCellTypes <- as.integer(input$cellTypeFilter)

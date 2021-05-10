@@ -199,45 +199,56 @@ exp0_correction <- zLayers_corrected$exp0 / zLayers$exp0 # this is collapsed sti
 zLayers <- zLayers_corrected
 rm(zLayers_corrected)
 
+#============================================
+
 # fill the rest of the corrected zLayers array and save it
 message("constructing corrected zLayers object")
 zLayers <- fillZLayerValues(zLayers, mergedBins$CNInt)
-zLayers$hmm <- NULL
+#zLayers$hmm <- NULL
+message("running genome level (i.e. low-res) HMM")
+HMM_set_persistence(1 - as.numeric(env$TRANSITION_PROB))
+zLayers$hmm <- sapply(1:cell$N_accepted, HMMByChrom, mergedBins$chrom)
+hmmRle <- lapply(1:cell$N_accepted, function(cellI) rle(zLayers$hmm[,cellI]) )
+rDataFile <- paste(env$ANALYZE_PREFIX, "hmmRle", 'all', "RData", sep=".")
+save(marks, cell, bin, mergedBins, hmmRle, file = rDataFile)
+message("clustering cells over entire genome (merged bins)")
+hClustGenome <- hclust(pearson.dist(t(zLayers$z0)))
 saveZLayers('all') # all means all chromosome, i.e. the low resolution genome view
 
 # apply the baseline normalization to each chromosome and save it individually for scanning
-message("applying baseline correction to each chromosome's unmerged bins")
+message("applying baseline correction to each chrom's unmerged bins and solving high-res HMM")
 sink <- mclapply(chroms, function(chrom){ 
   zLayers <<- assembleArray(bin$data[[chromI]] == chrom, chrom=chrom)
+  hClustChrom <<- hclust(pearson.dist(t(zLayers$z0)))  
+  zLayers$hmm <<- sapply(1:cell$N_accepted, HMM_viterbi, TRUE)
+  hmmRle <<- lapply(1:cell$N_accepted, function(cellI) rle(zLayers$hmm[,cellI]) )
+  rDataFile <- paste(env$ANALYZE_PREFIX, "hmmRle", chrom, "RData", sep=".")
+  save(hmmRle, file = rDataFile)  
   saveZLayers(chrom)
   1
 }, mc.cores = env$N_CPU)
 
 #============================================
 
-# steps below (HMM and hierachical clustering) no longer performed up front
-# they are deferred until after 1st-pass lineage assembly by bin correlation methods
-
-## perform corrected HMM by chrom to find aneuploidy and large CNVs, as definitive output
+## perform corrected HMM by chrom to find aneuploidy and large CNVs
 #message("determining corrected bin copy number by cell, genome view")
 #HMM_set_persistence(1 - as.numeric(env$TRANSITION_PROB))
 #zLayers$hmm <- sapply(1:cell$N_accepted, HMMByChrom, mergedBins$chrom)
-#    #plotDebug_cellBins(zLayers[,1:4,zLN$cn], "Bin_CN_corrected", "Bin", "Copy Number",
-#    #                   ylim=c(0,4), hmm=zLayers[,,zLN$hmm] + ploidy)
-
-## perform genome-level hierachical clustering
+    #plotDebug_cellBins(zLayers[,1:4,zLN$cn], "Bin_CN_corrected", "Bin", "Copy Number",
+    #                   ylim=c(0,4), hmm=zLayers[,,zLN$hmm] + ploidy)
+# perform genome-level hierachical clustering
 #message("clustering cells over entire genome (merged bins)")
 #hClustGenome <- hclust(pearson.dist(t(zLayers[,,zLN$z0])))
 #saveZLayers('all')
 
-## cluster each chromosome; segment individual cells (will work on clustered cell HMM later)
+# cluster each chromosome; segment individual cells (will work on clustered cell HMM later)
 #message("performing HMM and cell clustering on each chromosome, unmerged bins")
 #sink <- mclapply(chroms, function(chrom){ 
-#  zLayers <<- assembleArray(bin$data[[chromI]] == chrom, chrom=chrom)
-#  hClustChrom <<- hclust(pearson.dist(t(zLayers[,,zLN$z0])))
-#  zLayers[,,zLN$hmm] <<- sapply(1:cell$N_accepted, HMM_viterbi, TRUE)
-#  saveZLayers(chrom)
-#  1
+  #zLayers <<- assembleArray(bin$data[[chromI]] == chrom, chrom=chrom)
+  #hClustChrom <<- hclust(pearson.dist(t(zLayers[,,zLN$z0])))
+  #zLayers[,,zLN$hmm] <<- sapply(1:cell$N_accepted, HMM_viterbi, TRUE)
+  #saveZLayers(chrom)
+  #1
 #}, mc.cores = env$N_CPU)
 
 #============================================
