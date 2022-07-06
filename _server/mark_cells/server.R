@@ -20,7 +20,8 @@ server <- function(input, output, session){
     
     # clear the current filter selections
     observeEvent(input$resetFilters, {
-        updateSelectInput(session, 'project', selected='-')        
+        #updateSelectInput(session, 'project', selected='-')
+        updateTextInput(session, 'project', value='')
         updateSelectInput(session, 'sample',  selected='-')        
         updateRadioButtons(session, 'cellTypeFilter', selected=0)
         #updateCheckboxGroupInput(session, 'targetTypeFilter', selected=defaultTargetPairTypes)        
@@ -39,7 +40,7 @@ server <- function(input, output, session){
         updateTextInput(session, 'cellNumber', value=newN)
     }
     observeEvent(input$project, {
-        if(input$project == "-"){
+        if(input$project == "-" || input$project == ""){
             updateSelectInput(session, 'sample', choices=c('-'))
         } else {
             crr <- input$sample

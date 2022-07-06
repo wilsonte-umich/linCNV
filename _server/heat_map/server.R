@@ -6,7 +6,7 @@
 # handle top level user actions
 server <- function(input, output, session){
     sessionEnv <- environment()
-    verbose <<- FALSE
+    verbose <<- TRUE
 
     # declare session-specific data resources; only visible within server block
     # see: https://shiny.rstudio.com/articles/scoping.html

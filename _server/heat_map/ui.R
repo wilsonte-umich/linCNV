@@ -94,6 +94,14 @@ ui <- fluidPage(
             # global action buttons
             actionButton(inputId = "reload", "Refresh Sample Names"),
 
+            # for adjusting figure size for copying out for sharing
+            hr(),
+            #actionButton(inputId = "printImageToDisk", "Print Image to Disk"),            
+            textInput('axisCex','Axis Cex','1'),
+            textInput('heatMapWidth','Heat Map Width in Pixels',''),
+            textInput('heatMapHeight','Heat Map Height in Pixels',''),
+            textInput('maxNCells','Max # of cells',''),
+
             # width of the option section
             width=3
         ),

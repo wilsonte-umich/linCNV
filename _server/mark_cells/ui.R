@@ -54,9 +54,11 @@ ui <- fluidPage(
         sidebarPanel(
             
             # filters for selecting the plotted data
-            selectInput(inputId = 'project',
-                        label = 'Project',
-                        choices = projects),
+            #selectInput(inputId = 'project',
+            #            label = 'Project',
+            #            choices = projects),
+            textInput(inputId = 'project',
+                        label = 'Project'),
             selectInput(inputId = "sample",
                          label = "Sample",
                          choices = c('-')),

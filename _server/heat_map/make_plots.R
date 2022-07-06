@@ -59,8 +59,12 @@ fillHeatMapColors <- function(){
 getHeatMapColors <- function(bins){
     reportProgress('getHeatMapColors')
     
-    # get the order set of cells to plot
+    # get the ordered set of cells to plot
     allowedCells <- applyCellFilters(bins) # a subset of the indices of _accepted_ cells; total set = 1:cell$N_accepted
+    if(input$maxNCells != "") {
+        maxNCells <- as.integer(input$maxNCells)
+        if(length(allowedCells) > maxNCells) allowedCells <- sort(sample(allowedCells, maxNCells))
+    }
     cellStack <- getCellStack(bins, allowedCells, set=TRUE) # a reordering of allowedCells
     viewport_$cells <- allowedCells
     viewport_$stack <- cellStack
@@ -90,17 +94,21 @@ plotHeatMap_genome <- function(){
     # make the bin-based matrix plot; use rectangle to plot each pixel
     colors <- getHeatMapColors(region$bins) # is no position filtering in whole genome view
     nBins  <- nrow(colors)
-    nCells <- ncol(colors)   
-    par(mar=c(4.1,4.1,0.1,2.1))
+    nCells <- ncol(colors)
+    par(mar=c(5.1,5.1,0.1,2.1))
     reportProgress('plotting heat map')
     plot(0, 0, typ="n",
          xlim=c(1,nBins+1)+xOffset, ylim=c(1,nCells+1),
-         xlab="Variable Width Bin", ylab="Cell",
+         xlab="Bin", ylab="Cell",
+         cex.axis= as.double(input$axisCex),
+         cex.lab = as.double(input$axisCex),
          xaxs="i", yaxs="i", yaxt="n")
     majorUnit <- if(nCells >= 200) 50 else { if(nCells >= 100) 25 else 10}
     ticks <- seq(0, nCells, by=majorUnit)
-    axis(side=2, labels=ticks, at=ticks+0.5)
-    axis(side=4, labels=ticks, at=ticks+0.5)
+    axis(side=2, labels=ticks, at=ticks+0.5,
+         cex.axis= as.double(input$axisCex))
+    axis(side=4, labels=ticks, at=ticks+0.5,
+         cex.axis= as.double(input$axisCex))
     xleft <- rep(1:nBins, nCells) + xOffset
     ybot  <- as.vector(sapply(1:nCells, function(y) rep(y, nBins)))
     rect(xleft, ybot, xleft + 1, ybot + 1, col=colors, border=NA) # the slowest step!
@@ -155,14 +163,16 @@ plotHeatMap_region <- function(){
     }
 
     # make the coordinate-based matrix plot; use rectangle to plot each pixel
-    par(fig=c(0,1,0,geneTrackFig), new=TRUE, mar=c(4.1,4.1,0.1,0.1))
+    par(fig=c(0,1,0,geneTrackFig), new=TRUE, mar=c(5.1,5.1,0.1,0.1))
     reportProgress('plotting heat map')
     xScalar <- 1e6
     
     plot(0, 0, typ="n",
-         xlim=c(region$minPos,region$maxPos) / xScalar, ylim=c(1,nCells+1),
-         xlab="Genome Coordinate (Mpb)", ylab="Cell",
-         xaxs="i", yaxs="i")
+        xlim=c(region$minPos,region$maxPos) / xScalar, ylim=c(1,nCells+1),
+        xlab="Genome Coordinate (Mpb)", ylab="Cell",
+        cex.axis= as.double(input$axisCex),
+        cex.lab = as.double(input$axisCex),
+        xaxs="i", yaxs="i")
 
     xleft  <- rep(region$posBinData$start + 1, nCells)
     xright <- rep(region$posBinData$end,       nCells)
@@ -181,10 +191,16 @@ getPixelsPerCell <- function(nCells){
     } else { 1.5 }
 }
 heatMapHeight <- function(nCells=NULL){ # enable dynamic heat map plot height based on plotted cell number
-    if(is.null(nCells)) nCells <- heatMap_$nCells
-    nCells * getPixelsPerCell(nCells) + getGeneTrackPixels() + 50
+    if(input$heatMapHeight == '') {
+        if(is.null(nCells)) nCells <- heatMap_$nCells
+        nCells * getPixelsPerCell(nCells) + getGeneTrackPixels() + 50        
+    } else as.integer(input$heatMapHeight)
+}
+heatMapWidth <- function(){ # enable dynamic heat map plot height based on plotted cell number
+    if(input$heatMapWidth == '') 'auto' else as.integer(input$heatMapWidth)
 }
 output$heatMap  <- renderPlot({
+    reportProgress('output$heatMap')
     loadSampleChromData('plotHeatMap')
     heatMap_$nCells <- if(!is.null(zLayers[[input$chrom]])){
         if(input$chrom == 'all') plotHeatMap_genome() else plotHeatMap_region()
@@ -192,11 +208,13 @@ output$heatMap  <- renderPlot({
         plot(0, 0, typ="n",
              xlim=c(1,1000), ylim=c(1,100),
              xlab="Bin", ylab="Cell",
+             cex.axis= as.double(input$axisCex),
+             cex.lab = as.double(input$axisCex),
              xaxs="i", yaxs="i")
         rect(1, 1, 1000, 100, col="grey", border=NA)
         100
     }
-}, height = heatMapHeight)
+}, height = heatMapHeight, width = heatMapWidth)
 
 #----------------------------------------------------------------------
 # plot level 2 = interactive dendogram of the clustered viewport

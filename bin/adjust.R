@@ -147,7 +147,7 @@ binSizeRegression <- function(regressor, y, yPrefix, type, xlim, prob=0.001){
     plotBinSizeRegression(x, y, yPrefix, type, xlim, peak, fit)
     residual <- y / modalCNRatio - predict(fit, data.frame(x=x))
     yOut <- (peak + residual) * modalCNRatio
-    #yOut <- ifelse(is.na(yOut), y, yOut) # only needed for loess
+    yOut <- ifelse(is.na(yOut), y, yOut)
     yOut
 }
 bin$sizes_corrected <- binSizeRegression('gc_fraction', bin$sizes, 'Initial', 'GC', c(0.25,0.75))
