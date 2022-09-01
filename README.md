@@ -3,7 +3,7 @@
 !!! WARNING !!!
 -----------------------------------------------------------
 
-This pipeline is under active development and NOT stable!
+This pipeline is not under active development and NOT stable!
 
 -----------------------------------------------------------
 Overview
