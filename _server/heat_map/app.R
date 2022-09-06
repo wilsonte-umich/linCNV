@@ -19,13 +19,15 @@ urlSuffix <- if(isDev) 'dev' else ''
 port <- as.integer(switch(serverEnv$MODE, # get and check the port
     dev   = serverEnv$DEV_PORT,
     prod  = serverEnv$PROD_PORT,
-    local = serverEnv$LOCAL_PORT
+    local = serverEnv$LOCAL_PORT,
+    remote = serverEnv$REMOTE_PORT
 ))
 if(is.null(port)) stop(paste("port missing for mode:", serverEnv$MODE))
 host <- switch(serverEnv$MODE, # get and check the host
     dev   = "0.0.0.0",
     prod  = "0.0.0.0",
-    local = "127.0.0.1"
+    local = "127.0.0.1",
+    remote = "127.0.0.1"
 )
 if(is.null(host)) stop(paste("host missing for mode:", serverEnv$MODE))
 for (var in c('PIPELINE_NAME','ACTIONS_PATH','DATA_PATH')){ # check required paths
